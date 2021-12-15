@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "tsc -p tsconfig.json",
+    "start": "node index.js",
     "lint": "next lint"
   },
   "dependencies": {
@@ -17,6 +17,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@tsconfig/node16": "^1.0.2",
     "@types/node": "^16.11.12",
     "@types/react": "^17.0.37",
     "@types/uuid": "^8.3.3",
