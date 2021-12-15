@@ -1,5 +1,4 @@
 import type { NextPage } from 'next'
-import { GetStaticProps } from 'next'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { useState } from 'react'
@@ -7,9 +6,6 @@ import { v4 as uuidv4 } from 'uuid'
 import classNames from 'classnames'
 
 const Home: NextPage = () => {
-
-  // Manages counter to provide IDs to new items
-  const [count, setCount] = useState(1)
 
   // Manages addition of new items to list
   const [todoItem, setTodoItem] = useState("")
@@ -27,7 +23,6 @@ const Home: NextPage = () => {
   const handleAdd = () => {
     // todoItem evaluates to false if it is an empty string
     if (todoItem) {
-      setCount(count + 1) // Update counter to generate new ID
       setItems([
         {
           id: uuidv4(),
