@@ -7,51 +7,45 @@ import classNames from 'classnames'
 
 const Home: NextPage = () => {
 
-  // Manages addition of new items to list
-  const [todoItem, setTodoItem] = useState("")
+  // Tracks new item
+  const [todoItem, setTodoItem] = useState({title: "", id: uuidv4(), done: false})
 
-  // Manages items in list
-  const [items, setItems] = useState([
-    {
-      id: "0",
-      message: "Buy Eggs",
-      done: false
-    }
-  ])
+  // Tracks items in list
+  const [items, setItems] = useState([])
+
+  // Update value of new task when text is entered
+  const handleChange = ({ target }) => {
+    const { value } = target
+    setTodoItem(prevTodoItem => ({...prevTodoItem, title: value, id: uuidv4(), done: false}))
+    console.log(todoItem)
+  }
 
   // Add items to list
   const handleAdd = () => {
     // todoItem evaluates to false if it is an empty string
-    if (todoItem) {
-      setItems([
-        {
-          id: uuidv4(),
-          message: todoItem,
-          done: false
-        }, // Add newly-entered item into list of items
-        ...items  // Recopy items into list of items
-      ])
-  
+    if (todoItem.title) {
+      setItems(prevItems => [todoItem, ...prevItems])
+      console.log(items)
       // Clear text from field
-      setTodoItem("")
+      setTodoItem({title: "", id: "", done: false})
     }
-    
   }
 
   // Track which items have been completed
   const handleToggle = (id: string) => {
     // Iterate through items and update the done status of the passed item
-    const _items = items.map((item) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          done: !item.done
+    setItems(prevItems => {
+      return prevItems.map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            done: !item.done
+          }
         }
-      }
-      return item
+        return item
+      })
     })
-
-    setItems(_items)
+    console.log(items)
   }
 
   return (
@@ -70,17 +64,17 @@ const Home: NextPage = () => {
 
         <h2>To-Do:</h2>
 
-        <input type="text" value={todoItem} onChange={(e) => setTodoItem(e.target.value)} />
+        <input type="text" value={todoItem.title} onChange={handleChange} />
         <button type="button" onClick={handleAdd}>Add</button>
         
         <ul>
-          {items.map(({ id, message, done}) => (
+          {items.map(({ title, id, done }) => (
             <li 
               key={id} 
               onClick={() => handleToggle(id)}
-              className={classNames("item", { done })}
+              className={classNames({ 'done': done })}
             >
-              {message} 
+              {title} 
             </li>
           ))}
         </ul>
