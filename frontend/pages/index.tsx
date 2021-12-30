@@ -17,7 +17,6 @@ const Home: NextPage = () => {
   const handleChange = ({ target }) => {
     const { value } = target
     setTodoItem(prevTodoItem => ({...prevTodoItem, title: value, id: uuidv4(), done: false}))
-    console.log(todoItem)
   }
 
   // Add items to list
@@ -25,10 +24,12 @@ const Home: NextPage = () => {
     // todoItem evaluates to false if it is an empty string
     if (todoItem.title) {
       setItems(prevItems => [todoItem, ...prevItems])
-      console.log(items)
       // Clear text from field
       setTodoItem({title: "", id: "", done: false})
     }
+    // TESTING
+    makePostRequest()
+    // END TESTING
   }
 
   // Track which items have been completed
@@ -45,7 +46,20 @@ const Home: NextPage = () => {
         return item
       })
     })
-    console.log(items)
+    // TESTING
+    makePostRequest()
+    // END TESTING
+  }
+
+  // Make POST request to server storing todo items
+  const makePostRequest = async() => {
+    const myUrl = 'http://localhost:8080'
+    const requestOptions = {
+      method: 'POST',
+      body: JSON.stringify(items)
+    }
+    const response = await fetch(myUrl, requestOptions)
+    console.log(response)
   }
 
   return (
