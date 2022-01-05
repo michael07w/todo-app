@@ -1,6 +1,17 @@
 import fastify, { FastifyInstance } from 'fastify'
-// Will use packages below when implementing schema types
-// import { Static, Type } from '@sinclair/typebox'
+import { Static, Type } from '@sinclair/typebox'
+
+// Define schema
+const TaskList = Type.String(
+    Type.Array(
+        Type.Object({
+            title: Type.String(),
+            id: Type.String(),
+            done: Type.Boolean()
+        })
+    )
+)
+type TaskListType = Static<typeof TaskList>
 
 // Instantiate server
 const server: FastifyInstance = fastify()
@@ -10,12 +21,22 @@ server.get('/', async(request, reply) => {
     reply.header('Access-Control-Allow-Origin', '*').send('success\n')
 })
 
-// Define action to POST request WITHOUT TYPES
-server.post('/', async(request, reply) => {
-    const { body: tasks } = request
-    console.log(tasks)
-    reply.header('Access-Control-Allow-Origin', '*').status(200).send(tasks)
-})
+// Define action to POST request WITH TYPES
+server.post<{ Body: TaskListType; Reply: TaskListType}>(
+    '/',
+    {
+        schema: {
+            body: TaskList,
+            response: {
+                200: TaskList
+            },
+        },
+    },
+    (request, reply) => {
+        const { body: tasks } = request
+        reply.header('Access-Control-Allow-Origin', '*').status(200).send(tasks)
+    }
+)
 
 server.listen(8080, (err, address) => {
     if(err) {
