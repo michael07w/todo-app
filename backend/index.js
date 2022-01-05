@@ -4,31 +4,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const fastify_1 = __importDefault(require("fastify"));
-const typebox_1 = require("@sinclair/typebox");
-// Define TaskList schema
-const TaskList = typebox_1.Type.Array(typebox_1.Type.Object({
-    title: typebox_1.Type.String(),
-    id: typebox_1.Type.String(),
-    done: typebox_1.Type.Boolean()
-}));
+// Will use packages below when implementing schema types
+// import { Static, Type } from '@sinclair/typebox'
 // Instantiate server
 const server = (0, fastify_1.default)();
 // Define response to GET request
 server.get('/', async (request, reply) => {
-    return;
+    reply.header('Access-Control-Allow-Origin', '*').send('success\n');
 });
-// Define action to POST request
-server.post('/', {
-    schema: {
-        body: TaskList,
-        response: {
-            200: TaskList,
-        },
-    },
-}, async (request, reply) => {
-    const { body: taskList } = request;
-    console.log(taskList);
-    reply.header('Access-Control-Allow-Origin', '*').status(200).send(taskList);
+// Define action to POST request WITHOUT TYPES
+server.post('/', async (request, reply) => {
+    const { body: tasks } = request;
+    console.log(tasks);
+    reply.header('Access-Control-Allow-Origin', '*').status(200).send(tasks);
 });
 server.listen(8080, (err, address) => {
     if (err) {

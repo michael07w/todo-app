@@ -21,15 +21,19 @@ const Home: NextPage = () => {
 
   // Add items to list
   const handleAdd = () => {
-    // todoItem evaluates to false if it is an empty string
+    // todoItem.title evaluates to false if it is an empty string
     if (todoItem.title) {
       setItems(prevItems => [todoItem, ...prevItems])
       // Clear text from field
       setTodoItem({title: "", id: "", done: false})
     }
+
     // TESTING
-    makePostRequest()
+    console.log(items)
     // END TESTING
+    
+    // Update list of todo items on server
+    makePostRequest()
   }
 
   // Track which items have been completed
@@ -46,20 +50,21 @@ const Home: NextPage = () => {
         return item
       })
     })
-    // TESTING
+    // Update list of todo items on server
     makePostRequest()
-    // END TESTING
   }
 
   // Make POST request to server storing todo items
   const makePostRequest = async() => {
-    const myUrl = 'http://localhost:8080'
+    const myUrl = 'http://localhost:8080/'
     const requestOptions = {
       method: 'POST',
       body: JSON.stringify(items)
     }
     const response = await fetch(myUrl, requestOptions)
-    console.log(response)
+
+    // inspect response
+    response.json().then(data => console.log(data))
   }
 
   return (
