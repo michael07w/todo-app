@@ -1,0 +1,14 @@
+type Query {
+    task_list: [Task!]!
+}
+
+type Mutation {
+    add(description: String!): Task!
+    finish(id: ID!): Task!
+}
+
+type Task {
+    id: ID!
+    description: String!
+    done: Boolean!
+}

@@ -1,20 +1,56 @@
-import fastify, { FastifyInstance } from 'fastify'
-// Will use packages below when implementing schema types
-// import { Static, Type } from '@sinclair/typebox'
+import fs from 'fs'
+import path from 'path'
+import fastify, { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
+import mercurius, { IResolvers } from 'mercurius'
 
 // Instantiate server
 const server: FastifyInstance = fastify()
 
-// Define response to GET request
-server.get('/', async(request, reply) => {
-    reply.header('Access-Control-Allow-Origin', '*').send('success\n')
-})
+// Array to store tasks
+let tasks = [{
+    id: 'task-0',
+    description: 'Brush Teeth!',
+    done: false
+}]
 
-// Define action to POST request WITHOUT TYPES
-server.post('/', async(request, reply) => {
-    const { body: tasks } = request
-    console.log(tasks)
-    reply.header('Access-Control-Allow-Origin', '*').status(200).send(tasks)
+// Define resolvers
+const resolvers: IResolvers = {
+    Query: {
+        task_list: () => tasks
+    },
+    Mutation: {
+        add: (parent, args) => {
+            let idCount = tasks.length
+
+            const task = {
+                id: `task-${idCount}`,
+                description: args.description,
+                done: false
+            }
+            tasks.push(task)
+            return task
+        },
+        finish: (parent, args) => {
+            const finished_task = tasks.find(task => task.id === args.id)
+            if (!finished_task)
+                return finished_task
+            finished_task.done = !finished_task.done
+            return finished_task
+        }
+    }, 
+    Task: {
+        id: (parent) => parent.id,
+        description: (parent) => parent.description
+    }
+}
+
+// Register mercurius as a plugin
+server.register(mercurius, {
+    schema: fs.readFileSync(
+        path.join(__dirname, 'schema.graphql'),
+        'utf8'
+    ),
+    resolvers,
 })
 
 server.listen(8080, (err, address) => {
