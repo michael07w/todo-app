@@ -3,7 +3,7 @@ type Query {
 }
 
 type Mutation {
-    add(description: String!): Task!
+    add(description: String!): [Task!]!
     finish(id: ID!): Task!
 }
 
