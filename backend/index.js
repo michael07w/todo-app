@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const fastify_1 = __importDefault(require("fastify"));
+
 const mercurius_1 = __importDefault(require("mercurius"));
 // Instantiate server
 const server = (0, fastify_1.default)();
@@ -44,11 +45,13 @@ const resolvers = {
         description: (parent) => parent.description
     }
 };
+
 // Register mercurius as a plugin
 server.register(mercurius_1.default, {
     schema: fs_1.default.readFileSync(path_1.default.join(__dirname, 'schema.graphql'), 'utf8'),
     resolvers,
 });
+
 server.listen(8080, (err, address) => {
     if (err) {
         console.error(err);
