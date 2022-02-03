@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
+import fastifyCors from 'fastify-cors'
 import mercurius, { IResolvers } from 'mercurius'
 
 // Instantiate server
@@ -28,7 +29,7 @@ const resolvers: IResolvers = {
                 done: false
             }
             tasks.push(task)
-            return task
+            return tasks
         },
         finish: (parent, args) => {
             const finished_task = tasks.find(task => task.id === args.id)
@@ -40,9 +41,15 @@ const resolvers: IResolvers = {
     }, 
     Task: {
         id: (parent) => parent.id,
-        description: (parent) => parent.description
+        description: (parent) => parent.description,
+        done: (parent) => parent.done
     }
 }
+
+// Register fastifyCors plugin to enable use of CORS
+server.register(fastifyCors, {
+    origin: '*'
+})
 
 // Register mercurius as a plugin
 server.register(mercurius, {
