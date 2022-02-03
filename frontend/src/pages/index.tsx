@@ -12,6 +12,7 @@ import { pagesIndexTaskListQuery } from './__generated__/pagesIndexTaskListQuery
 import { pagesAddTaskMutation } from './__generated__/pagesAddTaskMutation.graphql'
 import { createEnvironment } from '../../lib/relay'
 import { RecordMap } from 'relay-runtime/lib/store/RelayStoreTypes'
+import TaskList from '../components/TaskList'
 
 
 // Query to retrieve tasks
@@ -43,7 +44,7 @@ mutation pagesAddTaskMutation($input: String!) {
     id
     description
     done
-  }
+  }   
 }
 `
 
@@ -53,19 +54,28 @@ interface HomeProps {
 }
 
 
-const Home: NextPage<HomeProps> = ({ records}) => {
+const Home: NextPage<HomeProps> = ({ records }) => {
 
   // Tracks new item
   const [todoItem, setTodoItem] = useState({description: "", id: "", done: false})
 
   // Store value returned by query
-  const result = useQuery<pagesIndexTaskListQuery>(taskListQuery, {}, {fetchPolicy: 'network-only'})
+  const result = useQuery<pagesIndexTaskListQuery>(taskListQuery, {}, {})
 
   // Invoke useMutation hook
   const [finishMutate] = useMutation(taskFinishMutation)
 
   // Invoke useMutation hook
-  const [addMutate, { loading }] = useMutation(addTaskMutation)
+  const [addMutate, { loading }] = useMutation(
+    addTaskMutation,
+    {
+      updater: (store, payload) => {
+        const tasks = store.getPluralRootField('add')
+        const root = store.getRoot()
+        root.setLinkedRecords(tasks, 'task_list')
+      }
+    }
+  )
 
   // Update value of new task when text is entered
   const handleChange = ({ target }) => {
@@ -79,11 +89,14 @@ const Home: NextPage<HomeProps> = ({ records}) => {
   }
 
   const handleClick = (description: String) => {
-    addMutate({
-      variables: {
-        input: todoItem.description
-      },
-    })
+    if (todoItem.description) {
+      addMutate({
+        variables: {
+          input: todoItem.description
+        },
+      })
+      setTodoItem({id: "", description: "", done: false})
+    }
   }
 
   return (
@@ -107,12 +120,12 @@ const Home: NextPage<HomeProps> = ({ records}) => {
 
           <ul>
             {result.data?.task_list.map(({ description, id, done }) => (
-              <li 
-                key={id} 
+              <li
+                key={id}
                 onClick={() => handleToggle(id)}
                 className={classNames({ 'done': done })}
               >
-                {description} 
+                {description}
               </li>
             ))}
           </ul>

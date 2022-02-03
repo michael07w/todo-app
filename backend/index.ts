@@ -41,7 +41,8 @@ const resolvers: IResolvers = {
     }, 
     Task: {
         id: (parent) => parent.id,
-        description: (parent) => parent.description
+        description: (parent) => parent.description,
+        done: (parent) => parent.done
     }
 }
 
