@@ -1,0 +1,6 @@
+{
+    "presets": ["next/babel"],
+    
+    // Including `macros` resolves error: `Cannot find module 'fs'`
+    "plugins": ["relay", "macros"]
+}
