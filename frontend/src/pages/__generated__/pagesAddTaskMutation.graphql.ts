@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d2dda48822b1b57f2ae55c534f1f144c>>
+ * @generated SignedSource<<76b72fa2d779c30e6d6742d35a56295f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,11 +14,11 @@ export type pagesAddTaskMutation$variables = {
 };
 export type pagesAddTaskMutationVariables = pagesAddTaskMutation$variables;
 export type pagesAddTaskMutation$data = {
-  readonly add: ReadonlyArray<{
+  readonly add: {
     readonly id: string;
     readonly description: string;
     readonly done: boolean;
-  }>;
+  };
 };
 export type pagesAddTaskMutationResponse = pagesAddTaskMutation$data;
 export type pagesAddTaskMutation = {
@@ -47,7 +47,7 @@ v1 = [
     "concreteType": "Task",
     "kind": "LinkedField",
     "name": "add",
-    "plural": true,
+    "plural": false,
     "selections": [
       {
         "alias": null,
