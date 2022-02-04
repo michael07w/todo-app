@@ -29,7 +29,7 @@ const resolvers: IResolvers = {
                 done: false
             }
             tasks.push(task)
-            return tasks
+            return task
         },
         finish: (parent, args) => {
             const finished_task = tasks.find(task => task.id === args.id)

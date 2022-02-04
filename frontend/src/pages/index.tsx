@@ -68,9 +68,10 @@ const Home: NextPage<HomeProps> = ({ records }) => {
     addTaskMutation,
     {
       updater: (store, payload) => {
-        const tasks = store.getPluralRootField('add')
         const root = store.getRoot()
-        root.setLinkedRecords(tasks, 'task_list')
+        const newTask = store.getRootField('add')       // Get newly-added task
+        const newTaskList = [...root.getLinkedRecords('task_list'), newTask]
+        root.setLinkedRecords(newTaskList, 'task_list') // Add new task to task_list
       }
     }
   )
